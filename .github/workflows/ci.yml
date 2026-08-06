@@ -1,0 +1,37 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Unit, contract, and read-only invariant tests
+        run: python -m unittest discover tests -v
+      - name: OpenAPI drift gate
+        run: python scripts/check_openapi_drift.py
+      - name: Registry regeneration is deterministic
+        run: |
+          cp src/reddit_ads_mcp/policy/read_operations.json /tmp/before.json
+          python scripts/generate_registry.py
+          diff /tmp/before.json src/reddit_ads_mcp/policy/read_operations.json
+      - name: Package installs with pinned SDK
+        run: |
+          pip install .
+          python -c "import reddit_ads_mcp.app"
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Container builds
+        run: docker build -t reddit-ads-mcp:ci .
