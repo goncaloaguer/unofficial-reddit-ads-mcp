@@ -169,7 +169,7 @@ end with `STATUS: SUCCESS`):
 
 ```bash
 cd ~
-git clone https://github.com/REPLACE_OWNER/unofficial-reddit-ads-mcp.git
+git clone https://github.com/goncaloaguer/unofficial-reddit-ads-mcp.git
 cd unofficial-reddit-ads-mcp
 gcloud artifacts repositories create mcp --repository-format=docker --location=$REGION
 gcloud builds submit --tag $REGION-docker.pkg.dev/$PROJECT_ID/mcp/reddit-ads-mcp:latest
