@@ -1,8 +1,13 @@
-# Reddit Ads MCP (Unofficial + Read-Only)
+# Reddit Ads Insights MCP
 
 **Read-only, analysis-first [MCP](https://modelcontextprotocol.io) server for the Reddit Ads API v3.**
 Ask your AI assistant about your Reddit Ads performance — campaigns, subreddit-level
 breakdowns, reports, targeting — with a server that *cannot* modify anything.
+
+Works with **any MCP client**: Claude, ChatGPT, Cursor, VS Code, Windsurf,
+Gemini CLI, and anything else that speaks MCP — see
+[docs/CONNECT.md](docs/CONNECT.md). Host it anywhere a container runs; a
+step-by-step free-tier Google Cloud Run guide is included.
 
 > **Unofficial community project.** Not affiliated with, endorsed, certified, or
 > supported by Reddit, Inc. "Reddit" is a trademark of Reddit, Inc. You are
@@ -41,63 +46,42 @@ Resources: `reddit-ads://report-fields`, `reddit-ads://capabilities`.
 Phase 3 (diagnostics + targeting intelligence) is planned — see `PLAN.md`;
 live-API quirks are documented in `docs/API_NOTES.md`.
 
-## Getting started — pick your path
+## Setup overview
 
-### 🟢 Path A: "I've never installed an MCP server or used Google Cloud"
+1. **Create a Reddit Ads developer application** — in
+   [Reddit Ads Manager](https://ads.reddit.com), open your business settings →
+   **Developer Applications** → create an app. Note the **client ID** and
+   **secret**.
+2. **Authorize with `adsread` only** and obtain a **refresh token** (see
+   [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md)). The server refuses to
+   run with a write-capable grant.
+3. **Find your ad account ID** (`a2_…`) in the Ads Manager account switcher.
+4. **Run it** (either way):
+   - **Locally (stdio)** for desktop MCP clients:
 
-Follow **[docs/BEGINNER_GUIDE.md](docs/BEGINNER_GUIDE.md)** — a complete,
-copy-paste walkthrough from zero to asking Claude about your ads (~40 min,
-~$0/month). It assumes nothing and explains what you should see at every step.
+     ```bash
+     pip install .
+     cp .env.example .env   # fill in values, then source it
+     reddit-ads-mcp
+     ```
 
-### 🔵 Path B: Advanced (you know your way around a terminal)
+   - **Hosted** — any container platform works (the image is a plain
+     Dockerfile). A complete free-tier walkthrough for **Google Cloud Run**
+     is in [docs/DEPLOY_GCP.md](docs/DEPLOY_GCP.md) (~15 min); the same
+     env-var contract applies on Fly.io, Railway, Render, or your own VPS.
+     Hosted mode is required for chat apps like claude.ai and ChatGPT, which
+     can't run local servers.
 
-1. **Reddit credentials** (~10 min): create a developer app in Reddit Ads
-   Manager (**Developer Applications**, redirect URI
-   `http://localhost:8912/callback`), authorize with `scope=adsread`
-   + `duration=permanent`, exchange the code for a refresh token —
-   condensed steps in [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md).
-   Grab your `a2_…` ad account ID from the Ads Manager account switcher.
-2. **Deploy to your own Cloud Run** (~15 min): follow
-   [docs/DEPLOY_GCP.md](docs/DEPLOY_GCP.md) — Secret Manager for the four
-   secrets, dedicated least-privilege service account,
-   `gcloud builds submit` + `gcloud run deploy` with the personal-use cost
-   profile (scale-to-zero, max 1 instance), and a billing alert.
-3. **Or run locally over stdio** (no cloud at all):
-
-   ```bash
-   pip install .
-   ```
-
-   Claude Code / Claude Desktop config:
-
-   ```json
-   "reddit-ads": {
-     "type": "stdio",
-     "command": "reddit-ads-mcp",
-     "env": {
-       "REDDIT_CLIENT_ID": "…",
-       "REDDIT_CLIENT_SECRET": "…",
-       "REDDIT_REFRESH_TOKEN": "…",
-       "REDDIT_USER_AGENT": "desktop:unofficial-reddit-ads-mcp:0.2.1 (by /u/you)",
-       "ALLOWED_ACCOUNT_IDS": "a2_youraccount"
-     }
-   }
-   ```
-
-4. **Connect**: claude.ai custom connector (secret-path mode URL) or any
-   header-capable MCP client (bearer mode). Details below.
-
-Before you rely on the numbers, read [docs/API_NOTES.md](docs/API_NOTES.md) —
-the live API differs from its own spec in ways that matter (unit scaling,
-keyword-report lookback, pagination semantics). This server compensates for
-all of them, with formulas returned alongside every derived value.
+5. **Connect your AI tool** — per-client instructions for Claude, ChatGPT,
+   Cursor, VS Code, Gemini CLI, and generic MCP clients:
+   [docs/CONNECT.md](docs/CONNECT.md).
 
 ## Remote authentication (pick exactly one)
 
 | Mode | Use when | How |
 |---|---|---|
-| `bearer` (default) | Your MCP client can send headers (Claude Code, API) | `Authorization: Bearer <MCP_ACCESS_TOKEN>` on `/mcp` |
-| `secret_path` | Client cannot send custom headers (claude.ai custom connectors) | Endpoint served at `/<MCP_PATH_SECRET>/mcp`; `/mcp` returns 404 |
+| `bearer` (default) | Your MCP client can send headers (Claude Code, Cursor, VS Code, Gemini CLI) | `Authorization: Bearer <MCP_ACCESS_TOKEN>` on `/mcp` |
+| `secret_path` | Client only accepts a URL (claude.ai and ChatGPT custom connectors) | Endpoint served at `/<MCP_PATH_SECRET>/mcp`; `/mcp` returns 404 |
 
 Secret-path mode treats the URL as the credential: it can appear in client
 settings, browser history, and infrastructure logs. Generate it with

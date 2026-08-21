@@ -5,6 +5,12 @@ project. Expected cost for personal use (a few sessions per week): **~$0/month**
 (scale-to-zero, 1 max instance, well inside the free tier). Time: ~15 minutes
 after you have your Reddit credentials (see `AUTHENTICATION.md`).
 
+**Not a Google Cloud user?** The server is a plain container with an
+env-var contract (see `.env.example`) — the same image runs on Fly.io,
+Railway, Render, or any Docker host. This guide is simply the most
+cost-guarded path we have tested end to end. Client connections are
+documented separately in `CONNECT.md` and work identically wherever you host.
+
 Never put secrets in Dockerfiles, git, build args, or shell commands that log
 them. Secrets go into Secret Manager only.
 
@@ -80,7 +86,7 @@ gcloud run deploy reddit-ads-mcp \
   --memory 512Mi --cpu 1 --timeout 120 \
   --set-env-vars "MCP_TRANSPORT=http,MCP_AUTH_MODE=bearer,\
 ALLOWED_ACCOUNT_IDS=a2_YOURACCOUNT,\
-REDDIT_USER_AGENT=cloudrun:unofficial-reddit-ads-mcp:0.1.0 (by /u/YOUR_USERNAME)" \
+REDDIT_USER_AGENT=cloudrun:reddit-ads-insights-mcp:0.1.0 (by /u/YOUR_USERNAME)" \
   --set-secrets "REDDIT_CLIENT_ID=reddit-client-id:latest,\
 REDDIT_CLIENT_SECRET=reddit-client-secret:latest,\
 REDDIT_REFRESH_TOKEN=reddit-refresh-token:latest,\
