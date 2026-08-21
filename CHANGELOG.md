@@ -5,7 +5,10 @@
 - Docs: platform-agnostic client guide (`docs/CONNECT.md`) covering Claude,
   ChatGPT, Cursor, VS Code, Gemini CLI, and generic MCP clients; README and
   deploy guide updated to note the server runs on any container host and
-  works with any MCP client. No code changes.
+  works with any MCP client.
+- Acknowledgments (prior art) and Dependencies sections in the README;
+  Dependabot config for pip/docker/actions; committed `uv.lock` for
+  reproducible builds. No code changes.
 
 ## 0.2.1
 

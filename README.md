@@ -119,6 +119,31 @@ The pinned OpenAPI spec lives in `openapi/` with its checksum. Any spec update
 requires reclassifying changed operations and regenerating the registry in the
 same commit — CI enforces this.
 
+## Acknowledgments
+
+No code was reused from other projects, but this server stands on prior art
+worth crediting:
+
+- [mkerchenski/RedditAdsMcp](https://github.com/mkerchenski/RedditAdsMcp)
+  (C#, MIT) and [sbmeaper/reddit-ad-mcp](https://github.com/sbmeaper/reddit-ad-mcp)
+  (Python) — the first open-source Reddit Ads MCP servers; their setup flows
+  informed our authentication documentation.
+- Public field references from Supermetrics and Adzviser helped map the
+  reporting surface before the official OpenAPI spec settled every enum
+  (the live API disagreed with third-party docs in places — see
+  [docs/API_NOTES.md](docs/API_NOTES.md)).
+- Built with the official
+  [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk).
+
+## Dependencies
+
+Three direct runtime dependencies, declared in `pyproject.toml`:
+`mcp` (pinned `>=1.9,<2`; SDK 2.0 is API-incompatible), `httpx`, and
+`pydantic`. A committed `uv.lock` pins the full transitive tree for
+reproducible builds; Dependabot proposes version updates weekly. The small
+footprint is deliberate — this server handles ad-account credentials, so
+every dependency is attack surface.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
