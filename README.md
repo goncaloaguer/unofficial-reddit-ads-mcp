@@ -31,7 +31,7 @@ step-by-step free-tier Google Cloud Run guide is included.
 - **Personal-use cost profile.** Scale-to-zero Cloud Run, max 1 instance;
   normal personal use lands at ~$0/month.
 
-## Tools (15)
+## Tools (27)
 
 **Structure**: `list_ad_accounts` · `list_campaigns` · `list_ad_groups` ·
 `list_ads`
@@ -42,9 +42,16 @@ step-by-step free-tier Google Cloud Run guide is included.
 `analyze_pacing` · `analyze_conversions` · `analyze_video` ·
 `analyze_creatives` · `get_creative_context` · `get_account_history`
 
+**Diagnostics**: `get_tracking_health` · `diagnose_delivery` ·
+`list_custom_audiences` · `get_catalog_health`
+
+**Targeting & forecasting**: `search_targeting` ·
+`get_community_suggestions` · `get_reach_estimate` · `get_bid_suggestions` ·
+`get_keyword_suggestions` · `get_feature_access` · `get_saved_audiences` ·
+`list_lead_gen_forms`
+
 Resources: `reddit-ads://report-fields`, `reddit-ads://capabilities`.
-Phase 3 (diagnostics + targeting intelligence) is planned — see `PLAN.md`;
-live-API quirks are documented in `docs/API_NOTES.md`.
+Live-API quirks are documented in `docs/API_NOTES.md`.
 
 ## Setup overview
 

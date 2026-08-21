@@ -1,6 +1,21 @@
 # Changelog
 
-## 0.2.2 (unreleased)
+## 0.3.0 (unreleased)
+
+- **Phase 3 diagnostics + targeting intelligence (12 new tools, 27 total)**:
+  `get_tracking_health` (pixel last-fired recency), `diagnose_delivery`
+  (status/rejection/pixel/spend evidence), `list_custom_audiences` (metadata
+  only), `get_catalog_health`, `search_targeting` (communities, interests,
+  geo, devices, carriers, languages, third-party audiences),
+  `get_community_suggestions`, `get_reach_estimate`, `get_bid_suggestions`,
+  `get_keyword_suggestions`, `get_feature_access`, `get_saved_audiences`,
+  `list_lead_gen_forms` (with sunset warnings). Composite tools return
+  partial results with warnings instead of failing whole.
+- CI workflow: unit + read-only invariant tests (stdlib-only, pre-install),
+  OpenAPI drift gate, registry determinism check, package import smoke test
+  against the resolved MCP SDK, and a basic committed-secret grep.
+
+## 0.2.2
 
 - Docs: platform-agnostic client guide (`docs/CONNECT.md`) covering Claude,
   ChatGPT, Cursor, VS Code, Gemini CLI, and generic MCP clients; README and

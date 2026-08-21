@@ -8,7 +8,7 @@ scoped to `adsread` only. One-time, ~10 minutes.
 1. Sign in at [ads.reddit.com](https://ads.reddit.com) with the Reddit account
    that has access to your advertiser account.
 2. Business settings → **Developer Applications** → **Create a new app**.
-3. Name it (e.g. `unofficial-reddit-ads-mcp`), description optional.
+3. Name it (e.g. `reddit-ads-insights-mcp`), description optional.
 4. **Redirect URI** — first try `http://localhost:8912/callback`.
    - If the form accepts localhost, use it (preferred flow below).
    - If Reddit requires a public HTTPS URI, use any HTTPS URL **you control**
@@ -37,7 +37,7 @@ sent, then copy the `code` parameter (it expires in minutes).
 ```bash
 curl -s -X POST https://www.reddit.com/api/v1/access_token \
   -u "YOUR_APP_ID:YOUR_SECRET" \
-  -A "script:unofficial-reddit-ads-mcp:0.1.0 (by /u/YOUR_USERNAME)" \
+  -A "script:reddit-ads-insights-mcp:0.1.0 (by /u/YOUR_USERNAME)" \
   -d "grant_type=authorization_code&code=YOUR_CODE&redirect_uri=YOUR_REDIRECT_URI"
 ```
 

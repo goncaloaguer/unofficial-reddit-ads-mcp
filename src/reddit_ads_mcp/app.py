@@ -12,7 +12,13 @@ from importlib import resources as ilres
 from reddit_ads_mcp.auth.mcp_bearer import check_request, mcp_mount_path
 from reddit_ads_mcp.config import Settings, load_settings
 from reddit_ads_mcp.context import AppContext
-from reddit_ads_mcp.tools import analysis_tools, reporting_tools, structure
+from reddit_ads_mcp.tools import (
+    analysis_tools,
+    diagnostics,
+    reporting_tools,
+    structure,
+    targeting,
+)
 
 SERVER_NAME = "reddit-ads-insights"
 INSTRUCTIONS = (
@@ -235,6 +241,100 @@ def build_server(ctx: AppContext):
         return await analysis_tools.get_account_history(
             ctx, starts_at, ends_at, change_types, account_id
         )
+
+    @mcp.tool()
+    async def get_tracking_health(account_id: str | None = None) -> dict:
+        """Conversion tracking health: pixels and last-fired recency."""
+        return await diagnostics.get_tracking_health(ctx, account_id)
+
+    @mcp.tool()
+    async def diagnose_delivery(
+        account_id: str | None = None, lookback_days: int = 3
+    ) -> dict:
+        """Why isn't the account serving? Statuses, rejections, pixel config, recent spend evidence."""
+        return await diagnostics.diagnose_delivery(ctx, account_id, lookback_days)
+
+    @mcp.tool()
+    async def list_custom_audiences(account_id: str | None = None) -> dict:
+        """Custom audience inventory (metadata and approximate sizes only; never members)."""
+        return await diagnostics.list_custom_audiences(ctx, account_id)
+
+    @mcp.tool()
+    async def get_catalog_health(
+        business_id: str | None = None, account_id: str | None = None
+    ) -> dict:
+        """Product catalogs and recent import status (catalog-sales accounts)."""
+        return await diagnostics.get_catalog_health(ctx, business_id, account_id)
+
+    @mcp.tool()
+    async def search_targeting(
+        kind: str, query: str | None = None, limit: int = 50
+    ) -> dict:
+        """Targeting lookup. kind: communities, interests, geolocations,
+        devices, carriers, languages, third_party_audiences. Communities
+        return names + subscriber counts (targeting uses NAMES, not IDs)."""
+        return await targeting.search_targeting(ctx, kind, query, limit)
+
+    @mcp.tool()
+    async def get_community_suggestions(
+        seed_communities: list[str] | None = None,
+        website_url: str | None = None,
+    ) -> dict:
+        """Reddit's community-targeting suggestions from seed subreddits and/or a website URL."""
+        return await targeting.get_community_suggestions(
+            ctx, seed_communities, website_url
+        )
+
+    @mcp.tool()
+    async def get_reach_estimate(
+        geolocation: str,
+        duration_days: int = 7,
+        min_age: int | None = None,
+        max_age: int | None = None,
+        gender: str | None = None,
+    ) -> dict:
+        """Planning reach estimate. duration_days: 7 or 28; geolocation:
+        country code; gender: MALE/FEMALE/ALL (API constraints)."""
+        return await targeting.get_reach_estimate(
+            ctx, geolocation, duration_days, min_age, max_age, gender
+        )
+
+    @mcp.tool()
+    async def get_bid_suggestions(
+        bid_type: str,
+        campaign_objective: str,
+        account_id: str | None = None,
+        targeting_spec: dict | None = None,
+        optimization_goal: str | None = None,
+    ) -> dict:
+        """Reddit's suggested bid for a scenario. bid_type: CPC/CPM/CPV/CPV6;
+        campaign_objective: CONVERSIONS, CLICKS, IMPRESSIONS, ..."""
+        return await targeting.get_bid_suggestions(
+            ctx, bid_type, campaign_objective, account_id, targeting_spec,
+            optimization_goal,
+        )
+
+    @mcp.tool()
+    async def get_keyword_suggestions(seed_keywords: list[str]) -> dict:
+        """Keyword-targeting expansion ideas from seed keywords."""
+        return await targeting.get_keyword_suggestions(ctx, seed_keywords)
+
+    @mcp.tool()
+    async def get_feature_access(
+        account_id: str | None = None, business_id: str | None = None
+    ) -> dict:
+        """Which gated features (catalogs, lead gen, ...) this account can use."""
+        return await targeting.get_feature_access(ctx, account_id, business_id)
+
+    @mcp.tool()
+    async def get_saved_audiences(account_id: str | None = None) -> dict:
+        """Reusable targeting templates configured on the account."""
+        return await targeting.get_saved_audiences(ctx, account_id)
+
+    @mcp.tool()
+    async def list_lead_gen_forms(account_id: str | None = None) -> dict:
+        """Lead-gen form inventory (metadata only). Legacy: API sunsets 2026-09-21."""
+        return await targeting.list_lead_gen_forms(ctx, account_id)
 
     @mcp.resource("reddit-ads://report-fields")
     def report_fields() -> str:

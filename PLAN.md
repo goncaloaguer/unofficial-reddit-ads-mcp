@@ -772,7 +772,7 @@ The deployment guide must include a short monthly check covering Cloud Run billa
 Proposed structure:
 
 ```text
-unofficial-reddit-ads-mcp/
+reddit-ads-insights-mcp/
 ├── src/reddit_ads_mcp/
 │   ├── app.py
 │   ├── config.py
