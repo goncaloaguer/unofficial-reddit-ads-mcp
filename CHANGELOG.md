@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.1 (unreleased)
+## 0.3.1
 
 - get_tracking_health: parse the per-event last_fired_at map (API note 16);
   reports per-event recency instead of wrongly claiming "never fired".
@@ -9,7 +9,7 @@
 - API notes 16-17 added (pixel last-fired shape; community keyword search
   behavior).
 
-## 0.3.0 (unreleased)
+## 0.3.0
 
 - **Phase 3 diagnostics + targeting intelligence (12 new tools, 27 total)**:
   `get_tracking_health` (pixel last-fired recency), `diagnose_delivery`
