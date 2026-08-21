@@ -157,10 +157,18 @@ async def get_bid_suggestions(
         {"account": account, "bt": bid_type, "obj": campaign_objective,
          "t": targeting, "og": optimization_goal},
     )
+    from datetime import datetime, timedelta, timezone
+
+    now = datetime.now(timezone.utc)
     data: dict[str, Any] = {
         "ad_account_id": account,
         "bid_type": bid_type.upper(),
         "campaign_objective": campaign_objective.upper(),
+        # Required by the API: forecast window (defaults to the next 7 days).
+        "duration": {
+            "start_time": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "end_time": (now + timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        },
     }
     if targeting:
         data["targeting"] = targeting

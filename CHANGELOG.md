@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.1 (unreleased)
+
+- get_tracking_health: parse the per-event last_fired_at map (API note 16);
+  reports per-event recency instead of wrongly claiming "never fired".
+- get_bid_suggestions: include the required `duration` window (defaults to
+  the next 7 days).
+- API notes 16-17 added (pixel last-fired shape; community keyword search
+  behavior).
+
 ## 0.3.0 (unreleased)
 
 - **Phase 3 diagnostics + targeting intelligence (12 new tools, 27 total)**:

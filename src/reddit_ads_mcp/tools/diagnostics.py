@@ -49,9 +49,23 @@ async def get_tracking_health(
                 "GET", f"/pixels/{pixel_id}/last_fired_at", budget=budget
             )
             data = fired.get("data") or {}
-            last = data.get("last_fired_at") or data.get("last_fired")
-            entry["last_fired_at"] = last
-            age = _age_hours(last if isinstance(last, str) else None)
+            # Live API: the response is a per-event map (add_to_cart,
+            # purchase, page_visit, ... -> datetime) plus a `breakdown` of
+            # custom events — not a single last_fired_at field.
+            events: dict[str, str] = {
+                k: v for k, v in data.items()
+                if isinstance(v, str) and k != "breakdown"
+            }
+            for k, v in (data.get("breakdown") or {}).items():
+                if isinstance(v, str):
+                    events[f"custom:{k}"] = v
+            entry["events"] = {
+                k: {"last_fired_at": v, "hours_ago": _age_hours(v)}
+                for k, v in sorted(events.items())
+            }
+            latest = max(events.values()) if events else None
+            entry["last_fired_at"] = latest
+            age = _age_hours(latest)
             entry["hours_since_last_fire"] = age
             entry["status"] = (
                 "healthy" if age is not None and age <= 24

@@ -22,6 +22,8 @@ codebase and its tests.
 | 13 | Ad-group `goal_value` (budget) is micros of the account currency, like spend. | Converted in pacing analysis with provenance. |
 | 14 | Ad objects return `type: null`; the creative format (`VIDEO`/`IMAGE`/…) lives on the promoted post object. | Creative analysis joins format via one profile-posts list call per profile. |
 | 15 | Account history responses include member emails and full names. | Redacted by policy before returning; actors identified by member_id/username. |
+| 16 | `GET /pixels/{id}/last_fired_at` returns a **per-event map** (add_to_cart, purchase, page_visit, … plus a `breakdown` of custom events), not a single timestamp. | Tracking health reports per-event recency and derives overall health from the most recent event. |
+| 17 | Ads community search (`/targeting/communities/search`) returns few or no results for topical keywords (e.g. a condition or niche term). | Documented; `get_community_suggestions` (seed subreddits / website URL) is the effective discovery path. |
 
 Additional operating facts encoded in tool documentation: metrics stabilize in
 up to ~6 hours; delivery data spans 24 months; reach/frequency begin June 2024;
